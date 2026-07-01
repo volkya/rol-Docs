@@ -1,50 +1,60 @@
 const express = require('express');
 const router = express.Router();
-// Models
 const User = require('../models/user');
 const passport = require('passport');
+const { isAuthenticated } = require('../helpers/auth');
 
-// LOGIN
 router.get('/users/signin', (req, res) => {
+    if (req.isAuthenticated()) {
+        return res.redirect('/files');
+    }
     res.render('users/signin');
 });
+
 router.post('/users/signin', passport.authenticate('local', {
     successRedirect: '/files',
     failureRedirect: '/users/signin',
-    failureFlash: true  // para los mensajes flash
+    failureFlash: true,
 }));
 
-// REGISTER
 router.get('/users/signup', (req, res) => {
-    res.render('users/signup', {title: 'Sign up'});
+    if (req.isAuthenticated()) {
+        return res.redirect('/files');
+    }
+    res.render('users/signup', { title: 'Sign up' });
 });
+
 router.post('/users/signup', async (req, res) => {
     const errors = [];
     const { username, email, password, confirm_password } = req.body;
-    if (password !== confirm_password){
-        errors.push({text: "Password dont match"});
-    }
-    if (password.length < 4){
-        errors.push({text: "Password must be at least 4 characters"});
-    }
-    if (errors.length > 0 ){
-        res.render('users/signup', {errors, username, email, password, confirm_password});
-    }
-    else {
-        emailUser = await User.findOne({email: email}); // mail match
-        if (emailUser){
-            req.flash('error_msg', 'The mail is already in use');
-            res.redirect('/users/signup');
-        }else {
-            const newUser = new User({username, email, password, confirm_password});
-            newUser.password = await newUser.encryptPassword(password); // compare encrypt pass with classic pass inserted
-            await newUser.save(); // save object User
-            req.flash('success_msg', 'U r registred, now login pls'); // variable sended, user saved
-            res.redirect('/users/signin');
-        } // vsio ok, save pls
-    } // end email coincidence
-}); // other conditions verify
 
-// success_msg, error_msg, text from errors
+    if (password !== confirm_password) {
+        errors.push({ text: 'Las contraseñas no coinciden' });
+    }
+    if (password.length < 4) {
+        errors.push({ text: 'La contraseña debe tener al menos 4 caracteres' });
+    }
+    if (errors.length > 0) {
+        return res.render('users/signup', { errors, username, email });
+    }
+
+    const emailUser = await User.findOne({ email });
+    if (emailUser) {
+        req.flash('error_msg', 'El email ya está en uso');
+        return res.redirect('/users/signup');
+    }
+
+    const newUser = new User({ username, email, password });
+    newUser.password = await newUser.encryptPassword(password);
+    await newUser.save();
+    req.flash('success_msg', 'Registro exitoso. Ahora puedes iniciar sesión.');
+    res.redirect('/users/signin');
+});
+
+router.get('/users/logout', isAuthenticated, (req, res) => {
+    req.logout();
+    req.flash('success_msg', 'Sesión cerrada');
+    res.redirect('/');
+});
 
 module.exports = router;

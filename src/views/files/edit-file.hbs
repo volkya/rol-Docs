@@ -1,24 +1,97 @@
 <div class="row">
-    <div class="col-md-6 mx-auto">
-        <div class="card text-center">
-            <div class="card-header"><h3>Sign up</h3></div>
+    <div class="col-lg-12 mx-auto">
+        <div class="card">
+            <div class="card-header">
+                <h3>Editar ficha: {{file.name}}</h3>
+            </div>
             <div class="card-body">
-                <form action="/users/signup" method="POST">
-                    <div class="form-group">
-                        <input type="text" class="form-control" name="username" placeholder="Enter your username">
+                <form action="/files/edit/{{file._id}}?_method=PUT" method="POST" enctype="multipart/form-data">
+                    <div class="form-row">
+                        <div class="form-group col-md-3">
+                            <label>Nombre</label>
+                            <input type="text" class="form-control" name="name" value="{{file.name}}">
+                        </div>
+                        <div class="form-group col-md-3">
+                            <label>Edad</label>
+                            <input type="text" class="form-control" name="edad" value="{{file.edad}}">
+                        </div>
+                        <div class="form-group col-md-3">
+                            <label>Played by</label>
+                            <input type="text" class="form-control" name="pb" value="{{file.pb}}">
+                        </div>
+                        <div class="form-group col-md-3">
+                            <label>Empleo</label>
+                            <input type="text" class="form-control" name="empleo" value="{{file.empleo}}">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group col-md-3">
+                            <label>Grupo</label>
+                            <input type="text" class="form-control" name="grupo" value="{{file.grupo}}">
+                        </div>
+                        <div class="form-group col-md-3">
+                            <label>Raza</label>
+                            <input type="text" class="form-control" name="raza" value="{{file.raza}}">
+                        </div>
+                        <div class="form-group col-md-3">
+                            <label>Nacionalidad</label>
+                            <input type="text" class="form-control" name="nacionalidad" value="{{file.nacionalidad}}">
+                        </div>
+                        <div class="form-group col-md-3">
+                            <label>Orientación</label>
+                            <input type="text" class="form-control" name="orientacion" value="{{file.orientacion}}">
+                        </div>
                     </div>
                     <div class="form-group">
-                        <input type="email" class="form-control" name="email" placeholder="Enter your mail">
+                        <label>Psicología</label>
+                        <textarea class="form-control" name="psicologia" rows="4">{{file.psicologia}}</textarea>
                     </div>
                     <div class="form-group">
-                        <input type="password" class="form-control" name="password" placeholder="Enter your password">
+                        <label>Físico</label>
+                        <textarea class="form-control" name="fisico" rows="4">{{file.fisico}}</textarea>
                     </div>
                     <div class="form-group">
-                        <input type="password" class="form-control" name="confirm_password" placeholder="Confirm your password">
+                        <label>Historia</label>
+                        <textarea class="form-control" name="historia" rows="6">{{file.historia}}</textarea>
                     </div>
-                    <button class="btn btn-primary btn-block">
-                        Sign up
-                    </button>
+                    <div class="form-row">
+                        <div class="form-group col-md-2">
+                            <label>Fuerza</label>
+                            <input type="text" class="form-control" name="fuerza" value="{{file.fuerza}}">
+                        </div>
+                        <div class="form-group col-md-2">
+                            <label>Destreza</label>
+                            <input type="text" class="form-control" name="destreza" value="{{file.destreza}}">
+                        </div>
+                        <div class="form-group col-md-2">
+                            <label>Agilidad</label>
+                            <input type="text" class="form-control" name="agilidad" value="{{file.agilidad}}">
+                        </div>
+                        <div class="form-group col-md-2">
+                            <label>Resistencia</label>
+                            <input type="text" class="form-control" name="resistencia" value="{{file.resistencia}}">
+                        </div>
+                        <div class="form-group col-md-2">
+                            <label>Inteligencia</label>
+                            <input type="text" class="form-control" name="inteligencia" value="{{file.inteligencia}}">
+                        </div>
+                        <div class="form-group col-md-2">
+                            <label>Percepción</label>
+                            <input type="text" class="form-control" name="percepcion" value="{{file.percepcion}}">
+                        </div>
+                    </div>
+                    {{#if file.imageURL}}
+                        <div class="form-group">
+                            <label>Imagen actual</label><br>
+                            <img src="{{file.imageURL}}" alt="{{file.name}}" class="img-thumbnail" style="max-height: 200px;">
+                        </div>
+                    {{/if}}
+                    <div class="form-group">
+                        <label>Nueva imagen (opcional)</label>
+                        <input type="file" class="form-control-file" name="image">
+                    </div>
+                    <button class="btn btn-primary">Guardar cambios</button>
+                    <a href="/files" class="btn btn-secondary">Cancelar</a>
                 </form>
             </div>
         </div>

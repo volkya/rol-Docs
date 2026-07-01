@@ -5,19 +5,22 @@
   "main": "app.js",
   "scripts": {
     "dev": "nodemon src/app.js",
-    "start": "node src/app.js"
+    "start": "node src/app.js",
+    "db": "docker compose up mongodb",
+    "db:up": "docker compose up -d mongodb",
+    "db:down": "docker compose stop mongodb"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Volkya/rolDocs-nodejs.git"
+    "url": "git+https://github.com/Volkya/rol-Docs.git"
   },
   "keywords": [],
   "author": "volkya",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/Volkya/rolDocs-nodejs/issues"
+    "url": "https://github.com/Volkya/rol-Docs/issues"
   },
-  "homepage": "https://github.com/Volkya/rolDocs-nodejs#readme",
+  "homepage": "https://github.com/Volkya/rol-Docs#readme",
   "dependencies": {
     "bcryptjs": "^2.4.3",
     "cloudinary": "^1.19.0",

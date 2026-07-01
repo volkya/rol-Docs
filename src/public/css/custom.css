@@ -1,12 +1,185 @@
-table, th, td {
-    border: 1px solid black;
-    border-collapse: collapse;
+:root {
+    --bg-color: #f8f9fa;
+    --surface-color: #ffffff;
+    --surface-alt: #e9ecef;
+    --text-color: #212529;
+    --text-muted: #6c757d;
+    --border-color: #dee2e6;
+    --navbar-bg: #007bff;
+    --input-bg: #ffffff;
+    --input-border: #ced4da;
+    --link-color: #0056b3;
+    --shadow: rgba(0, 0, 0, 0.08);
+    --transition-speed: 0.3s;
 }
 
-textarea
-{
-    border:1px solid #999999;
-    width:100%;
-    margin:5px 0;
-    padding:3px;
+html.dark-mode {
+    --bg-color: #121212;
+    --surface-color: #1e1e2e;
+    --surface-alt: #252538;
+    --text-color: #eaeaea;
+    --text-muted: #adb5bd;
+    --border-color: #3a3a4a;
+    --navbar-bg: #16162a;
+    --input-bg: #2a2a3a;
+    --input-border: #44445a;
+    --link-color: #6ea8fe;
+    --shadow: rgba(0, 0, 0, 0.35);
+}
+
+body {
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    transition: background-color var(--transition-speed) ease,
+                color var(--transition-speed) ease;
+}
+
+a {
+    color: var(--link-color);
+}
+
+/* Navbar */
+.navbar.bg-primary {
+    background-color: var(--navbar-bg) !important;
+    transition: background-color var(--transition-speed) ease;
+}
+
+#theme-toggle {
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    font-size: 1.1rem;
+    padding: 0.5rem 0.75rem;
+}
+
+#theme-toggle:hover {
+    opacity: 0.85;
+}
+
+/* Cards y contenedores */
+.card,
+.jumbotron {
+    background-color: var(--surface-color);
+    border-color: var(--border-color);
+    color: var(--text-color);
+    box-shadow: 0 2px 8px var(--shadow);
+    transition: background-color var(--transition-speed) ease,
+                border-color var(--transition-speed) ease,
+                color var(--transition-speed) ease;
+}
+
+.card-header {
+    background-color: var(--surface-alt);
+    border-bottom-color: var(--border-color);
+    color: var(--text-color);
+}
+
+/* Formularios */
+.form-control,
+.custom-file-input,
+.custom-select {
+    background-color: var(--input-bg);
+    border-color: var(--input-border);
+    color: var(--text-color);
+}
+
+.form-control:focus {
+    background-color: var(--input-bg);
+    color: var(--text-color);
+    border-color: var(--link-color);
+}
+
+.form-control::placeholder {
+    color: var(--text-muted);
+}
+
+textarea {
+    background-color: var(--input-bg);
+    border: 1px solid var(--input-border);
+    color: var(--text-color);
+    width: 100%;
+    margin: 5px 0;
+    padding: 8px;
+    border-radius: 4px;
+    transition: background-color var(--transition-speed) ease,
+                border-color var(--transition-speed) ease,
+                color var(--transition-speed) ease;
+}
+
+/* Tablas */
+table,
+th,
+td {
+    border: 1px solid var(--border-color);
+    border-collapse: collapse;
+    color: var(--text-color);
+}
+
+/* Alertas flash */
+.alert-success {
+    background-color: #d4edda;
+    border-color: #c3e6cb;
+    color: #155724;
+}
+
+.alert-danger {
+    background-color: #f8d7da;
+    border-color: #f5c6cb;
+    color: #721c24;
+}
+
+html.dark-mode .alert-success {
+    background-color: #1a3d2b;
+    border-color: #2d5a40;
+    color: #a3d9b1;
+}
+
+html.dark-mode .alert-danger {
+    background-color: #3d1a1f;
+    border-color: #5a2d35;
+    color: #f5a8b0;
+}
+
+html.dark-mode .alert-warning {
+    background-color: #3d321a;
+    border-color: #5a4a2d;
+    color: #f5d9a8;
+}
+
+/* Botones con links dentro (all-files.hbs) */
+.btn a {
+    color: inherit;
+    text-decoration: none;
+}
+
+html.dark-mode .btn-outline-primary {
+    color: var(--link-color);
+    border-color: var(--link-color);
+}
+
+html.dark-mode .btn-outline-primary:hover {
+    background-color: var(--link-color);
+    color: #121212;
+}
+
+/* Imágenes */
+.img-thumbnail {
+    background-color: var(--surface-alt);
+    border-color: var(--border-color);
+}
+
+/* Dropdown */
+.dropdown-menu {
+    background-color: var(--surface-color);
+    border-color: var(--border-color);
+}
+
+.dropdown-item {
+    color: var(--text-color);
+}
+
+.dropdown-item:hover,
+.dropdown-item:focus {
+    background-color: var(--surface-alt);
+    color: var(--text-color);
 }

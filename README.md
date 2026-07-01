@@ -1,46 +1,95 @@
-# Rol Docs 
+# Rol Docs
 
-Create your own documents: files of character, chronologies, relationships, etc.
-We r using Nodejs for this full stack project
+App full-stack para crear y gestionar **fichas de personaje de rol**: historia, descripción física/psicológica, estadísticas e imagen.
 
-![](docs/rolDocs.png)
+## Stack
 
-### Tech stack
+| Capa | Tecnología |
+|------|------------|
+| Backend | Node.js, Express |
+| Frontend | Handlebars, Bootstrap |
+| Base de datos | MongoDB, Mongoose |
+| Auth | Passport (local) |
+| Imágenes | Multer (local) o Cloudinary (opcional) |
 
-| Language | Backend | Fronted | Database | Platform | Author |
-| -------- | -------- |--------|--------|--------|--------|
-| Nodejs | Express | Handlebars | Mongodb | Virtual Machine | Volkya |
+## Desarrollo local (recomendado mientras programás)
 
-### Whats next
+MongoDB en Docker, app en tu máquina con hot-reload.
 
-- [Todo]()
-- [Roadmap]()
+**Terminal 1 — base de datos:**
 
+```bash
+npm run db
+# o en segundo plano: npm run db:up
+```
 
-Backoff: https://trello.com/b/7wuxhn5c/rol-docs
+**Terminal 2 — app:**
 
-### Modules
+```bash
+cp .env.example .env   # solo la primera vez
+npm install
+npm run dev
+```
 
+Abrí [http://localhost:2000](http://localhost:2000)
 
-- Backend: routes, config, helpers.
-- Fronted: views, models, public.
+Tu `.env` debe tener:
 
-Authentication, passport, mongoose, handlebars, nodejs, mongodb, javascript
+```
+MONGODB_URI=mongodb://localhost:27017/rolDocs
+```
 
-# Future updates
+**MongoDB Compass:** conectá a `mongodb://localhost:27017` → base de datos `rolDocs`.
 
-- Chat rol
+Para apagar solo la DB: `npm run db:down`
 
-# Environment
-`PROD: url`
-`PORT`
+> No corras `docker compose up` completo y `npm run dev` a la vez: los dos intentarían usar el puerto 2000.
 
-### Legal
+---
 
-- [Terms and conditions]()
-- [Privacy Policy]()
-- [Open Source Notes]()
+## Levantar todo con Docker (para quien clona el repo)
 
-Built with curiosity ❤️ by @Dyma
+Ideal para GitHub: sin instalar Node ni MongoDB.
 
-- [Source Code]()
+```bash
+git clone https://github.com/Volkya/rol-Docs.git
+cd rol-Docs
+docker compose up --build
+```
+
+Abre [http://localhost:2000](http://localhost:2000)
+
+---
+
+## Variables de entorno
+
+Copia `.env.example` a `.env`:
+
+| Variable | Descripción |
+|----------|-------------|
+| `PORT` | Puerto del servidor (default: 2000) |
+| `MONGODB_URI` | URI de MongoDB (`localhost` en dev, `mongodb` dentro de Docker) |
+| `SESSION_SECRET` | Secreto de sesión |
+| `CLOUDINARY_*` | Opcional. Sin ellas, las fotos se guardan en `src/public/uploads` |
+
+## Funcionalidades
+
+- Registro e inicio de sesión
+- CRUD de fichas de personaje
+- Subida de imagen (local o Cloudinary)
+- Rutas protegidas con autenticación
+- Tema claro/oscuro
+
+## Scripts
+
+```bash
+npm run dev      # app local con nodemon
+npm run db       # solo MongoDB en Docker (foreground)
+npm run db:up    # solo MongoDB en Docker (background)
+npm run db:down  # apagar MongoDB
+npm start        # producción
+```
+
+---
+
+Built with curiosity by [@Dyma](https://github.com/Volkya)

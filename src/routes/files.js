@@ -1,79 +1,91 @@
 const express = require('express');
 const router = express.Router();
-// ENTITY
 const File = require('../models/file');
-const fs = require('fs-extra');
-const cloudinary = require('cloudinary');
-cloudinary.config({
-    cloud_name: 'volktech',
-    api_key: '356854687417533',
-    api_secret: 'w7NjyZ4jxCYBGf8QAHuZmh_d9Uk'
-});
-// ALL OBJECTS
-router.get('/files', async (req, res) => {
-    const files = await File.find().sort({date: 'desc'});
-    res.render('files/all-files', { files }); // send array objects files to template
-    // res.json(files);
-});
-// ADD FILE
-router.get('/files/add' , (req, res) => {
-    res.render('files/new-file');
-});
-router.post('/files/add', async (req, res) => {
-    const { name, edad, pb, empleo, grupo, raza, nacionalidad, orientacion, psicologia, fisico, historia, fuerza, destreza, agilidad, resistencia, inteligencia, percepcion, created_at } = req.body; // con esto obtenemos los value del form
-    const errors = []; // aca metemos elementos x cada tipo de error
-    if(!name){
-        errors.push({text: "Please, fill the name of your pj"});
-    }
-    if (!historia){
-        errors.push({text: 'Por favor, rellena la historia'});
-    }
-    if (!fisico){
-        errors.push({text: 'Rellena la descripción fisica del personaje por favor'})
-    }
-    if (!psicologia){
-        errors.push({text: 'Rellena la descripción psicologica del personaje por favor'})
-    }
-    if (errors.length > 0){ // si hay errores mostrame este cb
-        res.render('/files/add', {
-            errors,
-            name,
-            fisico,
-            psicologia,
-            historia
-        });
-    }else {
-        const picUpdate = await cloudinary.v2.uploader.upload(req.file.path, {folder: 'rolDocs'});
-        const newFile = new File({name, historia, fisico, psicologia,
-            edad, empleo, grupo, raza, nacionalidad, orientacion, fuerza,
-            destreza, resistencia, inteligencia, percepcion, agilidad, pb, created_at, imageURL: picUpdate.url, public_id: picUpdate.public_id});
-        await newFile.save();
-        await fs.remove(req.file.path);
-        req.flash('success_msg', 'File added succefully');
-        res.redirect('/files');
-        console.log(picUpdate);
-    }
-});
-// EDIT FILE
-router.get('/files/edit/:id', async (req, res) => {
-    const file = await File.findById(req.params.id);
-    res.render('files/edit-file', {file});
-});
-router.put('/files/edit/:id', async (req, res) => {
-    const {username, historia, fisico, psicologia,
-        edad, empleo, grupo, raza, nacionalidad, orientacion, fuerza,
-        destreza, resistencia, inteligencia, percepcion, agilidad, pb} = req.body;
-    await File.findByIdAndUpdate(req.params.id, {username, historia, fisico, psicologia,
-        edad, empleo, grupo, raza, nacionalidad, orientacion, fuerza,
-        destreza, resistencia, inteligencia, percepcion, agilidad, pb});
-    res.redirect('/files');
-});
-// DELETE FILE
-router.delete('/files/delete/:id', async (req, res) => {
-   await File.findByIdAndDelete(req.params.id);
-   req.flash('success_msg', 'Note deleted successfully');
-   res.redirect('/files');
+const { isAuthenticated } = require('../helpers/auth');
+const { uploadImage } = require('../helpers/upload');
+
+router.use(isAuthenticated);
+
+router.get('/', async (req, res) => {
+    const files = await File.find().sort({ createdAt: -1 });
+    res.render('files/all-files', { files });
 });
 
+router.get('/add', (req, res) => {
+    res.render('files/new-file');
+});
+
+router.post('/add', async (req, res) => {
+    const {
+        name, edad, pb, empleo, grupo, raza, nacionalidad, orientacion,
+        psicologia, fisico, historia, fuerza, destreza, agilidad,
+        resistencia, inteligencia, percepcion,
+    } = req.body;
+    const errors = [];
+
+    if (!name) errors.push({ text: 'Ingresa el nombre del personaje' });
+    if (!historia) errors.push({ text: 'Ingresa la historia del personaje' });
+    if (!fisico) errors.push({ text: 'Ingresa la descripción física' });
+    if (!psicologia) errors.push({ text: 'Ingresa la descripción psicológica' });
+
+    if (errors.length > 0) {
+        return res.render('files/new-file', {
+            errors, name, fisico, psicologia, historia,
+            edad, pb, empleo, grupo, raza, nacionalidad, orientacion,
+            fuerza, destreza, agilidad, resistencia, inteligencia, percepcion,
+        });
+    }
+
+    const image = await uploadImage(req.file && req.file.path);
+    const newFile = new File({
+        name, historia, fisico, psicologia,
+        edad, empleo, grupo, raza, nacionalidad, orientacion,
+        fuerza, destreza, resistencia, inteligencia, percepcion, agilidad, pb,
+        imageURL: image.url,
+        public_id: image.public_id,
+    });
+    await newFile.save();
+    req.flash('success_msg', 'Ficha creada correctamente');
+    res.redirect('/files');
+});
+
+router.get('/edit/:id', async (req, res) => {
+    const file = await File.findById(req.params.id);
+    if (!file) {
+        req.flash('error_msg', 'Ficha no encontrada');
+        return res.redirect('/files');
+    }
+    res.render('files/edit-file', { file });
+});
+
+router.put('/edit/:id', async (req, res) => {
+    const {
+        name, historia, fisico, psicologia,
+        edad, empleo, grupo, raza, nacionalidad, orientacion, fuerza,
+        destreza, resistencia, inteligencia, percepcion, agilidad, pb,
+    } = req.body;
+
+    const update = {
+        name, historia, fisico, psicologia,
+        edad, empleo, grupo, raza, nacionalidad, orientacion, fuerza,
+        destreza, resistencia, inteligencia, percepcion, agilidad, pb,
+    };
+
+    if (req.file) {
+        const image = await uploadImage(req.file.path);
+        update.imageURL = image.url;
+        update.public_id = image.public_id;
+    }
+
+    await File.findByIdAndUpdate(req.params.id, update);
+    req.flash('success_msg', 'Ficha actualizada');
+    res.redirect('/files');
+});
+
+router.delete('/delete/:id', async (req, res) => {
+    await File.findByIdAndDelete(req.params.id);
+    req.flash('success_msg', 'Ficha eliminada');
+    res.redirect('/files');
+});
 
 module.exports = router;

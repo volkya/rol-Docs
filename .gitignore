@@ -1,3 +1,6 @@
 .idea/
 node_modules
 .env
+src/public/uploads/*
+!src/public/uploads/.gitkeep
+.history/
