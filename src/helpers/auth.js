@@ -8,4 +8,11 @@ helpers.isAuthenticated = (req, res, next) => {
     res.redirect('/users/signin');
 };
 
+helpers.isGuest = (req, res, next) => {
+    if (!req.isAuthenticated()) {
+        return next();
+    }
+    res.redirect('/files');
+};
+
 module.exports = helpers;

@@ -9,11 +9,12 @@ services:
   app:
     build: .
     ports:
-      - "2000:2000"
+      - "${PORT:-2000}:${PORT:-2000}"
+    env_file:
+      - .env
     environment:
-      PORT: 2000
+      # Dentro de Docker la DB no es localhost, es el servicio mongodb
       MONGODB_URI: mongodb://mongodb:27017/rolDocs
-      SESSION_SECRET: docker-dev-secret-change-me
     depends_on:
       - mongodb
     volumes:

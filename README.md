@@ -12,50 +12,18 @@ App full-stack para crear y gestionar **fichas de personaje de rol**: historia, 
 | Auth | Passport (local) |
 | Imágenes | Multer (local) o Cloudinary (opcional) |
 
-## Desarrollo local (recomendado mientras programás)
-
-MongoDB en Docker, app en tu máquina con hot-reload.
-
-**Terminal 1 — base de datos:**
-
-```bash
-npm run db
-# o en segundo plano: npm run db:up
-```
-
-**Terminal 2 — app:**
-
-```bash
-cp .env.example .env   # solo la primera vez
-npm install
-npm run dev
-```
-
-Abrí [http://localhost:2000](http://localhost:2000)
-
-Tu `.env` debe tener:
-
-```
-MONGODB_URI=mongodb://localhost:27017/rolDocs
-```
-
-**MongoDB Compass:** conectá a `mongodb://localhost:27017` → base de datos `rolDocs`.
-
-Para apagar solo la DB: `npm run db:down`
-
-> No corras `docker compose up` completo y `npm run dev` a la vez: los dos intentarían usar el puerto 2000.
-
----
-
-## Levantar todo con Docker (para quien clona el repo)
+## Levantar todo con Docker
 
 Ideal para GitHub: sin instalar Node ni MongoDB.
 
 ```bash
 git clone https://github.com/Volkya/rol-Docs.git
 cd rol-Docs
+cp .env.example .env   # completar Cloudinary y SESSION_SECRET
 docker compose up --build
 ```
+
+Docker Compose lee tu `.env` automáticamente (`env_file`). Solo `MONGODB_URI` se sobreescribe internamente a `mongodb://mongodb:27017/rolDocs` porque dentro del contenedor la DB no es `localhost`.
 
 Abre [http://localhost:2000](http://localhost:2000)
 

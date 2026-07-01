@@ -21,7 +21,7 @@ async function uploadImage(filePath) {
     if (hasCloudinary) {
         const result = await cloudinary.v2.uploader.upload(filePath, { folder: 'rolDocs' });
         await fs.remove(filePath);
-        return { url: result.url, public_id: result.public_id };
+        return { url: result.secure_url, public_id: result.public_id };
     }
 
     return {

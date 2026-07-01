@@ -1,13 +1,16 @@
 <div class="jumbotron text-center">
-    <h1 class="display-4">Rol Docs</h1>
-    <p class="lead">Crea y organiza las fichas de tus personajes de rol en un solo lugar.</p>
-    <hr>
-    <p>Registra historia, descripción física, psicología, estadísticas e imagen de cada PJ.</p>
-    {{#if user}}
+    {{#if (isAuth user)}}
+        <h1 class="display-4">Hola, {{user.username}}</h1>
+        <p class="lead">Gestioná tus fichas de personaje desde acá.</p>
+        <hr>
         <a class="btn btn-primary btn-lg" href="/files" role="button">Ver mis fichas</a>
         <a class="btn btn-success btn-lg" href="/files/add" role="button">Nueva ficha</a>
     {{else}}
-        <a class="btn btn-primary btn-lg" href="/users/signup" role="button">Crear cuenta</a>
+        <h1 class="display-4">Rol Docs</h1>
+        <p class="lead">Crea y organiza las fichas de tus personajes de rol en un solo lugar.</p>
+        <hr>
+        <p>Registra historia, descripción física, psicología, estadísticas e imagen de cada PJ.</p>
+        <a class="btn btn-primary btn-lg" href="/users/signup" role="button">Registrarse</a>
         <a class="btn btn-outline-primary btn-lg" href="/users/signin" role="button">Iniciar sesión</a>
     {{/if}}
 </div>

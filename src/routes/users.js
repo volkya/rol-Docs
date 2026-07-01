@@ -2,12 +2,9 @@ const express = require('express');
 const router = express.Router();
 const User = require('../models/user');
 const passport = require('passport');
-const { isAuthenticated } = require('../helpers/auth');
+const { isAuthenticated, isGuest } = require('../helpers/auth');
 
-router.get('/users/signin', (req, res) => {
-    if (req.isAuthenticated()) {
-        return res.redirect('/files');
-    }
+router.get('/users/signin', isGuest, (req, res) => {
     res.render('users/signin');
 });
 
@@ -17,11 +14,8 @@ router.post('/users/signin', passport.authenticate('local', {
     failureFlash: true,
 }));
 
-router.get('/users/signup', (req, res) => {
-    if (req.isAuthenticated()) {
-        return res.redirect('/files');
-    }
-    res.render('users/signup', { title: 'Sign up' });
+router.get('/users/signup', isGuest, (req, res) => {
+    res.render('users/signup', { title: 'Registro' });
 });
 
 router.post('/users/signup', async (req, res) => {

@@ -5,11 +5,12 @@
     </button>
 
     <div class="collapse navbar-collapse" id="navbarColor01">
-        <ul class="navbar-nav ml-auto">
+        <ul class="navbar-nav ml-auto align-items-lg-center">
             <li class="nav-item">
                 <a class="nav-link" href="/about">Acerca de</a>
             </li>
-            {{#if user}}
+
+            {{#if (isAuth user)}}
                 <li class="nav-item">
                     <a class="nav-link" href="/files">Mis fichas</a>
                 </li>
@@ -17,17 +18,21 @@
                     <a class="nav-link" href="/files/add">Nueva ficha</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="/users/logout">Salir ({{user.username}})</a>
+                    <span class="nav-link mb-0">Hola, <strong>{{user.username}}</strong></span>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/users/logout">Cerrar sesión</a>
                 </li>
             {{else}}
                 <li class="nav-item">
-                    <a class="nav-link" href="/users/signup">Registro</a>
+                    <a class="btn btn-outline-light btn-sm ml-lg-2" href="/users/signin">Iniciar sesión</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="/users/signin">Login</a>
+                    <a class="btn btn-light btn-sm ml-lg-2" href="/users/signup">Registrarse</a>
                 </li>
             {{/if}}
-            <li class="nav-item d-flex align-items-center">
+
+            <li class="nav-item d-flex align-items-center ml-lg-2">
                 <button id="theme-toggle" type="button" aria-label="Cambiar tema">
                     <span id="theme-icon">🌙</span>
                 </button>

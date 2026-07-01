@@ -1,26 +1,36 @@
 <div class="row">
     {{#each files}}
-<!--        NOTAS CARGADAS-->
-        <div class="col-md-3">
-            <div class="card-header">
-                <h3><a href="/files/view/{{_id}}">{{name}}</a></h3>
-            </div>
-            <div class="card-body">
-                <button class="btn btn-warning btn-block btn-sm"><a href="/files/edit/{{_id}}">EDIT</a></button>
-                <form action="/files/delete/{{_id}}?_method=DELETE" method="POST">
-                    <input type="hidden" name="_method" value="DELETE">
-                    <button type="submit" class="btn btn-danger btn-block btn-sm">DELETE</button>
-                </form>
+        <div class="col-md-4 mb-4">
+            <div class="card h-100">
+                {{#if imageURL}}
+                    <img src="{{imageURL}}" class="card-img-top file-card-img" alt="{{name}}" loading="lazy">
+                {{else}}
+                    <div class="card-img-top file-card-placeholder">
+                        <span>Sin imagen</span>
+                    </div>
+                {{/if}}
+                <div class="card-body d-flex flex-column">
+                    <h5 class="card-title">{{name}}</h5>
+                    {{#if empleo}}<p class="card-text text-muted mb-1">{{empleo}}</p>{{/if}}
+                    {{#if raza}}<p class="card-text text-muted mb-3">{{raza}}</p>{{/if}}
+                    <div class="mt-auto">
+                        <a href="/files/edit/{{_id}}" class="btn btn-warning btn-block btn-sm">Editar</a>
+                        <form action="/files/delete/{{_id}}?_method=DELETE" method="POST" class="mt-2">
+                            <input type="hidden" name="_method" value="DELETE">
+                            <button type="submit" class="btn btn-danger btn-block btn-sm">Eliminar</button>
+                        </form>
+                    </div>
+                </div>
             </div>
         </div>
-<!--        NO TENES NOTAS CARGADAS-->
-        {{else}}
-        <div class="card mx-auto">
-            <div class="card-header">
-                <h2>There are not files yet!</h2>
-            </div>
-            <div class="card-body">
-                <button class="btn btn-success btn-block"><a href="/files/add">Crea tu primera ficha</a></button>
+    {{else}}
+        <div class="col-12">
+            <div class="card mx-auto text-center">
+                <div class="card-body">
+                    <h2 class="h4">Todavía no tenés fichas</h2>
+                    <p class="text-muted mb-3">Creá tu primera ficha de personaje con imagen, historia y stats.</p>
+                    <a href="/files/add" class="btn btn-success">Crear primera ficha</a>
+                </div>
             </div>
         </div>
     {{/each}}

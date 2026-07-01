@@ -162,7 +162,22 @@ html.dark-mode .btn-outline-primary:hover {
     color: #121212;
 }
 
-/* Imágenes */
+/* Imágenes en listado de fichas */
+.file-card-img {
+    height: 200px;
+    object-fit: cover;
+}
+
+.file-card-placeholder {
+    height: 200px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--surface-alt);
+    color: var(--text-muted);
+    border-bottom: 1px solid var(--border-color);
+}
+
 .img-thumbnail {
     background-color: var(--surface-alt);
     border-color: var(--border-color);
