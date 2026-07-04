@@ -1,30 +1,30 @@
 # Rol Docs
 
-Aplicación full-stack para crear y gestionar **fichas de personaje de rol** (RPG): historia, descripción física/psicológica, estadísticas e imagen de cada PJ.
+A full-stack web app for creating and managing **RPG character sheets**: backstory, physical/psychological descriptions, stats, and portrait images.
 
-Pensada para la comunidad hispana de rol, este repositorio contiene una app monolítica con servidor Express, vistas Handlebars y persistencia en MongoDB. Incluye Docker Compose para que cualquiera pueda clonar el repo y levantar el proyecto sin instalar bases de datos ni dependencias del sistema.
+Built for the Spanish-speaking tabletop RPG community, this repository is a monolithic Express app with Handlebars views and MongoDB persistence. Docker Compose is included so anyone can clone the repo and run the project without installing databases or system-level dependencies.
 
 ## Features
 
-- **Gestión de fichas** — Crear, editar y eliminar personajes con atributos, historia y stats
-- **Subida de imágenes** — Almacenamiento local o Cloudinary (configurable vía `.env`)
-- **Autenticación** — Registro e inicio de sesión con email y contraseña (Passport local)
-- **Rutas protegidas** — Solo usuarios autenticados acceden a las fichas
-- **Tema claro/oscuro** — Toggle con persistencia en `localStorage`
-- **Docker Compose** — App + MongoDB listos con un solo comando
+- **Character sheet management** — Create, edit, and delete characters with attributes, backstory, and stats
+- **Image uploads** — Local storage or Cloudinary (configurable via `.env`)
+- **Authentication** — Email/password sign-up and sign-in (Passport local strategy)
+- **Protected routes** — Only authenticated users can access character sheets
+- **Light/dark theme** — Toggle with `localStorage` persistence
+- **Docker Compose** — App + MongoDB ready with a single command
 
 ## Tech Stack
 
-| Capa | Tecnología |
-|------|------------|
+| Layer | Technology |
+|-------|------------|
 | Runtime | Node.js |
 | Backend | Express |
 | Frontend | Handlebars, Bootstrap 4 |
-| Base de datos | MongoDB, Mongoose |
-| Autenticación | Passport (local strategy), bcryptjs |
-| Sesiones | express-session, connect-flash |
-| Imágenes | Multer, Cloudinary (opcional) |
-| Contenedores | Docker, Docker Compose |
+| Database | MongoDB, Mongoose |
+| Authentication | Passport (local strategy), bcryptjs |
+| Sessions | express-session, connect-flash |
+| Images | Multer, Cloudinary (optional) |
+| Containers | Docker, Docker Compose |
 
 ## Getting Started
 
@@ -32,7 +32,7 @@ Pensada para la comunidad hispana de rol, este repositorio contiene una app mono
 
 - **Node.js** >= 18
 - **npm** >= 9
-- **Docker** y **Docker Compose** (recomendado para MongoDB y despliegue completo)
+- **Docker** and **Docker Compose** (recommended for MongoDB and full-stack deployment)
 
 ### Installation
 
@@ -45,20 +45,20 @@ npm install
 
 ## Running the Application
 
-Hay dos formas de trabajar con el proyecto:
+There are two ways to run the project:
 
-### Opción A — Desarrollo local (recomendada)
+### Option A — Local development (recommended)
 
-MongoDB en Docker, app en tu máquina con hot-reload.
+MongoDB in Docker, app on your machine with hot-reload.
 
-**Terminal 1 — base de datos:**
+**Terminal 1 — database:**
 
 ```bash
 npm run db
-# o en segundo plano: npm run db:up
+# or in the background: npm run db:up
 ```
 
-**Terminal 2 — aplicación:**
+**Terminal 2 — application:**
 
 ```bash
 npm run dev
@@ -66,13 +66,13 @@ npm run dev
 
 - App → [http://localhost:2000](http://localhost:2000)
 - MongoDB → `mongodb://localhost:27017`
-- Compass / cliente MongoDB → conectar a `mongodb://localhost:27017`, base de datos `rolDocs`
+- MongoDB Compass → connect to `mongodb://localhost:27017`, database `rolDocs`
 
-> No ejecutes `docker compose up` completo y `npm run dev` a la vez: ambos usan el puerto `2000`.
+> Do not run full `docker compose up` and `npm run dev` at the same time — both bind to port `2000`.
 
-### Opción B — Todo con Docker (ideal para quien clona el repo)
+### Option B — Full Docker stack (ideal for cloning the repo)
 
-Sin instalar Node ni MongoDB en el host.
+No need to install Node or MongoDB on the host.
 
 ```bash
 cp .env.example .env
@@ -80,115 +80,115 @@ docker compose up --build
 ```
 
 - App → [http://localhost:2000](http://localhost:2000)
-- MongoDB → expuesto en `localhost:27017`
+- MongoDB → exposed on `localhost:27017`
 
-Docker Compose carga tu `.env` con `env_file`. Solo `MONGODB_URI` se sobreescribe internamente a `mongodb://mongodb:27017/rolDocs`, porque dentro del contenedor el host de la DB es el servicio `mongodb`, no `localhost`.
+Docker Compose loads your `.env` via `env_file`. Only `MONGODB_URI` is overridden internally to `mongodb://mongodb:27017/rolDocs`, because inside the container the database host is the `mongodb` service, not `localhost`.
 
 ## Authentication
 
-El flujo de autenticación usa **Passport** con estrategia local (email + contraseña):
+Authentication uses **Passport** with a local strategy (email + password):
 
-1. **Registro** (`POST /users/signup`) — Crea un usuario con contraseña hasheada (bcrypt)
-2. **Login** (`POST /users/signin`) — Valida credenciales y abre sesión
-3. **Sesión** — `express-session` mantiene al usuario logueado (`req.user`)
-4. **Protección** — Middleware `isAuthenticated` bloquea rutas `/files/*`
-5. **Logout** (`GET /users/logout`) — Cierra la sesión y redirige al inicio
+1. **Sign up** (`POST /users/signup`) — Creates a user with a bcrypt-hashed password
+2. **Sign in** (`POST /users/signin`) — Validates credentials and opens a session
+3. **Session** — `express-session` keeps the user logged in (`req.user`)
+4. **Protection** — `isAuthenticated` middleware guards all `/files/*` routes
+5. **Logout** (`GET /users/logout`) — Destroys the session and redirects home
 
-La UI adapta el navbar según el estado de sesión: visitantes ven **Iniciar sesión / Registrarse**; usuarios logueados ven **Mis fichas / Nueva ficha / Cerrar sesión**.
+The navbar adapts to session state: guests see **Sign in / Sign up**; logged-in users see **My sheets / New sheet / Log out**.
 
 ## Image Uploads
 
-Las imágenes de las fichas se procesan con **Multer** (disco temporal) y luego:
+Character images are handled with **Multer** (temporary disk storage) and then:
 
-| Configuración | Comportamiento |
-|---------------|----------------|
-| `CLOUDINARY_*` definidas | Sube a Cloudinary (carpeta `rolDocs`) y guarda `imageURL` + `public_id` en MongoDB |
-| Sin Cloudinary | Guarda en `src/public/uploads/` y usa URL local (`/uploads/...`) |
+| Configuration | Behavior |
+|---------------|----------|
+| `CLOUDINARY_*` set | Uploads to Cloudinary (`rolDocs` folder) and stores `imageURL` + `public_id` in MongoDB |
+| No Cloudinary | Saves to `src/public/uploads/` and uses a local URL (`/uploads/...`) |
 
-Solo se aceptan imágenes (jpg, png, webp, etc.), máximo **5 MB**.
+Only image files are accepted (jpg, png, webp, etc.), max **5 MB**.
 
-### Configurar Cloudinary
+### Setting up Cloudinary
 
-1. Crear cuenta en [cloudinary.com](https://cloudinary.com)
-2. Copiar **Cloud name**, **API Key** y **API Secret** del dashboard
-3. Agregarlos al `.env`:
+1. Create an account at [cloudinary.com](https://cloudinary.com)
+2. Copy **Cloud name**, **API Key**, and **API Secret** from the dashboard
+3. Add them to `.env`:
 
 ```env
-CLOUDINARY_CLOUD_NAME=tu_cloud_name
-CLOUDINARY_API_KEY=tu_api_key
-CLOUDINARY_API_SECRET=tu_api_secret
+CLOUDINARY_CLOUD_NAME=your_cloud_name
+CLOUDINARY_API_KEY=your_api_key
+CLOUDINARY_API_SECRET=your_api_secret
 ```
 
-4. Reiniciar la app (`npm run dev` o `docker compose restart app`)
+4. Restart the app (`npm run dev` or `docker compose restart app`)
 
 ## Environment Variables
 
-Copia `.env.example` a `.env` en la raíz del proyecto:
+Copy `.env.example` to `.env` in the project root:
 
-| Variable | Ejemplo | Descripción |
+| Variable | Example | Description |
 |----------|---------|-------------|
-| `PORT` | `2000` | Puerto del servidor Express |
-| `MONGODB_URI` | `mongodb://localhost:27017/rolDocs` | URI de MongoDB (local en dev) |
-| `SESSION_SECRET` | `un-secreto-largo` | Secreto para firmar cookies de sesión |
-| `CLOUDINARY_CLOUD_NAME` | `mi-cloud` | Opcional — nombre del cloud en Cloudinary |
-| `CLOUDINARY_API_KEY` | `123456789` | Opcional — API key de Cloudinary |
-| `CLOUDINARY_API_SECRET` | `abc123` | Opcional — API secret de Cloudinary |
+| `PORT` | `2000` | Express server port |
+| `MONGODB_URI` | `mongodb://localhost:27017/rolDocs` | MongoDB connection URI (local in dev) |
+| `SESSION_SECRET` | `a-long-random-secret` | Secret for signing session cookies |
+| `CLOUDINARY_CLOUD_NAME` | `my-cloud` | Optional — Cloudinary cloud name |
+| `CLOUDINARY_API_KEY` | `123456789` | Optional — Cloudinary API key |
+| `CLOUDINARY_API_SECRET` | `abc123` | Optional — Cloudinary API secret |
 
 ## Routes Reference
 
-La app es **server-rendered** (no expone API REST JSON). Las rutas principales:
+The app is **server-rendered** (no JSON REST API). Main routes:
 
-### Públicas
+### Public
 
-| Método | Ruta | Descripción |
+| Method | Path | Description |
 |--------|------|-------------|
 | `GET` | `/` | Landing page |
-| `GET` | `/about` | Acerca de la app |
+| `GET` | `/about` | About the app |
 
-### Autenticación
+### Authentication
 
-| Método | Ruta | Body / Params | Descripción |
+| Method | Path | Body / Params | Description |
 |--------|------|---------------|-------------|
-| `GET` | `/users/signup` | — | Formulario de registro |
-| `POST` | `/users/signup` | `username`, `email`, `password`, `confirm_password` | Crear cuenta |
-| `GET` | `/users/signin` | — | Formulario de login |
-| `POST` | `/users/signin` | `email`, `password` | Iniciar sesión |
-| `GET` | `/users/logout` | — | Cerrar sesión (requiere auth) |
+| `GET` | `/users/signup` | — | Sign-up form |
+| `POST` | `/users/signup` | `username`, `email`, `password`, `confirm_password` | Create account |
+| `GET` | `/users/signin` | — | Sign-in form |
+| `POST` | `/users/signin` | `email`, `password` | Log in |
+| `GET` | `/users/logout` | — | Log out (requires auth) |
 
-### Fichas de personaje (requieren auth)
+### Character sheets (auth required)
 
-| Método | Ruta | Body / Params | Descripción |
+| Method | Path | Body / Params | Description |
 |--------|------|---------------|-------------|
-| `GET` | `/files` | — | Listado de fichas |
-| `GET` | `/files/add` | — | Formulario nueva ficha |
-| `POST` | `/files/add` | `multipart/form-data` + campos del personaje | Crear ficha |
-| `GET` | `/files/edit/:id` | — | Formulario de edición |
-| `PUT` | `/files/edit/:id` | `multipart/form-data` + campos | Actualizar ficha |
-| `DELETE` | `/files/delete/:id` | `_method=DELETE` | Eliminar ficha |
+| `GET` | `/files` | — | List all sheets |
+| `GET` | `/files/add` | — | New sheet form |
+| `POST` | `/files/add` | `multipart/form-data` + character fields | Create sheet |
+| `GET` | `/files/edit/:id` | — | Edit form |
+| `PUT` | `/files/edit/:id` | `multipart/form-data` + character fields | Update sheet |
+| `DELETE` | `/files/delete/:id` | `_method=DELETE` | Delete sheet |
 
 ## Project Structure
 
 ```
 rol-Docs/
 ├── src/
-│   ├── app.js              # Punto de entrada Express
-│   ├── database.js         # Conexión MongoDB
-│   ├── keys.js             # Variables de entorno
+│   ├── app.js              # Express entry point
+│   ├── database.js         # MongoDB connection
+│   ├── keys.js             # Environment config
 │   ├── config/
-│   │   ├── passport.js     # Estrategia de autenticación
-│   │   └── multer.js       # Configuración de subida de archivos
+│   │   ├── passport.js     # Authentication strategy
+│   │   └── multer.js       # File upload config
 │   ├── helpers/
-│   │   ├── auth.js         # Middlewares isAuthenticated / isGuest
-│   │   └── upload.js       # Lógica Cloudinary / local
+│   │   ├── auth.js         # isAuthenticated / isGuest middleware
+│   │   └── upload.js       # Cloudinary / local upload logic
 │   ├── models/
-│   │   ├── user.js         # Schema de usuario
-│   │   └── file.js         # Schema de ficha de personaje
+│   │   ├── user.js         # User schema
+│   │   └── file.js         # Character sheet schema
 │   ├── routes/
-│   │   ├── index.js        # Rutas públicas
-│   │   ├── users.js        # Auth
-│   │   └── files.js        # CRUD de fichas
-│   ├── views/              # Plantillas Handlebars
-│   └── public/             # CSS, JS y uploads locales
+│   │   ├── index.js        # Public routes
+│   │   ├── users.js        # Auth routes
+│   │   └── files.js        # Character sheet CRUD
+│   ├── views/              # Handlebars templates
+│   └── public/             # CSS, JS, and local uploads
 ├── docker-compose.yml      # App + MongoDB
 ├── Dockerfile
 ├── .env.example
@@ -198,24 +198,24 @@ rol-Docs/
 ## Scripts
 
 ```bash
-npm run dev      # App local con nodemon (hot-reload)
-npm start        # Producción
-npm run db       # Solo MongoDB en Docker (foreground)
-npm run db:up    # Solo MongoDB en Docker (background)
-npm run db:down  # Detener contenedor de MongoDB
+npm run dev      # Local app with nodemon (hot-reload)
+npm start        # Production
+npm run db       # MongoDB only in Docker (foreground)
+npm run db:up    # MongoDB only in Docker (background)
+npm run db:down  # Stop MongoDB container
 ```
 
 ## Roadmap
 
-Funcionalidades planificadas (modelos ya definidos, rutas pendientes):
+Planned features (models already defined, routes pending):
 
-- Cronologías de personaje
-- Mapa de relaciones entre personajes
-- Chat de rol
+- Character chronologies
+- Relationship maps between characters
+- In-character chat
 
 ## Core Philosophy
 
-Mantener la app **simple y funcional** para jugadores de rol hispanohablantes. Cada ficha concentra la información del personaje en un solo lugar, sin distracciones. Las contribuciones y mejoras deben priorizar claridad y usabilidad por sobre complejidad innecesaria.
+Keep the app **simple and focused** for tabletop RPG players. Each sheet centralizes all character info in one place, without clutter. Every improvement should prioritize clarity and usability over unnecessary complexity.
 
 ---
 
